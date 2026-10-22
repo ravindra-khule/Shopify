@@ -1,0 +1,110 @@
+guide-links {
+  display: block;
+}
+
+.guide-links__heading {
+  margin: 0 0 2.4rem;
+  text-transform: uppercase;
+}
+
+.guide-links__grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 2.4rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+@media screen and (min-width: 750px) {
+  .guide-links__grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media screen and (min-width: 990px) {
+  .guide-links__grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+.guide-links__item {
+  min-width: 0;
+}
+
+.guide-links__card {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  border: 0.1rem solid rgba(var(--color-foreground), 0.14);
+  border-radius: var(--text-boxes-radius);
+  background: rgb(var(--color-background));
+  overflow: hidden;
+}
+
+.guide-links__media {
+  display: block;
+  aspect-ratio: 16 / 10;
+  overflow: hidden;
+}
+
+.guide-links__image {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 300ms ease;
+}
+
+a.guide-links__media:hover .guide-links__image {
+  transform: scale(1.03);
+}
+
+.guide-links__content {
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+  flex: 1;
+  padding: 1.6rem 2rem 2rem;
+}
+
+.guide-links__badge {
+  margin: 0;
+  font-size: 1.1rem;
+  font-weight: var(--font-body-weight-bold);
+  letter-spacing: 0.1em;
+  line-height: calc(1 + 0.5 / var(--font-body-scale));
+  text-transform: uppercase;
+}
+
+.guide-links__title {
+  margin: 0;
+  font-size: 1.6rem;
+  font-weight: var(--font-body-weight-bold);
+  line-height: calc(1 + 0.4 / var(--font-body-scale));
+  color: rgb(var(--color-foreground));
+}
+
+.guide-links__title a {
+  color: inherit;
+  text-decoration: none;
+}
+
+.guide-links__title a:hover {
+  text-decoration: underline;
+  text-underline-offset: 0.3rem;
+}
+
+.guide-links__link {
+  margin-top: auto;
+  padding-top: 0.4rem;
+  font-size: 1.3rem;
+  line-height: calc(1 + 0.5 / var(--font-body-scale));
+  color: rgb(var(--color-foreground));
+  text-decoration: underline;
+  text-underline-offset: 0.3rem;
+}
+
+.guide-links__link:hover {
+  text-decoration-thickness: 0.2rem;
+}

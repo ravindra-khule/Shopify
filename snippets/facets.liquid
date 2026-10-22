@@ -59,6 +59,19 @@
             {%- endif -%}
             {% comment %} Pills are right below the title for filter type vertical {% endcomment %}
             {%- if filter_type == 'vertical' -%}
+              {%- if toolbar_active_facets -%}
+                <div class="active-facets-vertical-filter">
+                  {%- unless results.filters == empty -%}
+                    <h2
+                      class="facets__heading facets__heading--vertical caption-large text-body"
+                      id="verticalTitle"
+                      tabindex="-1"
+                    >
+                      {{ 'products.facets.filter_by_label' | t }}
+                    </h2>
+                  {%- endunless -%}
+                </div>
+              {%- else -%}
               <div class="active-facets active-facets-desktop">
                 <div class="active-facets-vertical-filter">
                   {%- unless results.filters == empty -%}
@@ -109,6 +122,7 @@
                   {% endif %}
                 {%- endfor -%}
               </div>
+              {%- endif -%}
             {%- endif -%}
 
             <script src="{{ 'show-more.js' | asset_url }}" defer="defer"></script>

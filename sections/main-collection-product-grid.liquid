@@ -46,6 +46,77 @@
       {%- if section.settings.enable_sorting and section.settings.filter_type == 'vertical' -%}
         <facet-filters-form class="facets facets-vertical-sort page-width small-hide">
           <form class="facets-vertical-form" id="FacetSortForm">
+            <div class="facets-vertical-sort__group">
+              <div class="product-count-vertical light" role="status">
+                <h2 class="product-count__text text-body">
+                  <span id="ProductCountDesktop">
+                    {%- if collection.results_count -%}
+                      {{
+                        'templates.search.results_with_count'
+                        | t: terms: collection.terms, count: collection.results_count
+                      }}
+                    {%- elsif collection.products_count == collection.all_products_count -%}
+                      {{ 'products.facets.product_count_simple' | t: count: collection.products_count }}
+                    {%- else -%}
+                      {{
+                        'products.facets.product_count'
+                        | t: product_count: collection.products_count, count: collection.all_products_count
+                      }}
+                    {%- endif -%}
+                  </span>
+                </h2>
+                {%- render 'loading-spinner' -%}
+              </div>
+
+              {%- if section.settings.enable_filtering -%}
+                <div class="active-facets active-facets-desktop">
+                  {%- for filter in collection.filters -%}
+                    {%- for value in filter.active_values -%}
+                      <facet-remove>
+                        <a
+                          href="{{ value.url_to_remove }}"
+                          class="active-facets__button active-facets__button--light"
+                        >
+                          <span class="active-facets__button-inner button button--tertiary">
+                            {{ filter.label | escape }}: {{ value.label | escape }}
+                            <span class="svg-wrapper">
+                              {{- 'icon-close-small.svg' | inline_asset_content -}}
+                            </span>
+                            <span class="visually-hidden">{{ 'products.facets.clear_filter' | t }}</span>
+                          </span>
+                        </a>
+                      </facet-remove>
+                    {%- endfor -%}
+                    {% if filter.type == 'price_range' %}
+                      {% assign min = filter.min_value.value %}
+                      {% assign max = filter.max_value.value %}
+                      {%- if min != null or max != null -%}
+                        <facet-remove>
+                          <a
+                            href="{{ filter.url_to_remove }}"
+                            class="active-facets__button active-facets__button--light"
+                          >
+                            <span class="active-facets__button-inner button button--tertiary">
+                              {{ min | default: 0 | money }} - {{ max | default: filter.range_max | money }}
+                              <span class="svg-wrapper">
+                                {{- 'icon-close-small.svg' | inline_asset_content -}}
+                              </span>
+                              <span class="visually-hidden">{{ 'products.facets.clear_filter' | t }}</span>
+                            </span>
+                          </a>
+                        </facet-remove>
+                      {%- endif -%}
+                    {% endif %}
+                  {%- endfor -%}
+                  <facet-remove class="active-facets__button-wrapper">
+                    <a href="{{ collection.url }}" class="active-facets__button-remove underlined-link">
+                      <span>{{ 'products.facets.clear_all' | t }}</span>
+                    </a>
+                  </facet-remove>
+                </div>
+              {%- endif -%}
+            </div>
+
             <div class="facet-filters sorting caption">
               <div class="facet-filters__field">
                 <h2 class="facet-filters__label caption-large text-body">
@@ -76,27 +147,6 @@
                 </div>
               </div>
             </div>
-
-            <div class="product-count-vertical light" role="status">
-              <h2 class="product-count__text text-body">
-                <span id="ProductCountDesktop">
-                  {%- if collection.results_count -%}
-                    {{
-                      'templates.search.results_with_count'
-                      | t: terms: collection.terms, count: collection.results_count
-                    }}
-                  {%- elsif collection.products_count == collection.all_products_count -%}
-                    {{ 'products.facets.product_count_simple' | t: count: collection.products_count }}
-                  {%- else -%}
-                    {{
-                      'products.facets.product_count'
-                      | t: product_count: collection.products_count, count: collection.all_products_count
-                    }}
-                  {%- endif -%}
-                </span>
-              </h2>
-              {%- render 'loading-spinner' -%}
-            </div>
           </form>
         </facet-filters-form>
       {%- endif -%}
@@ -115,7 +165,8 @@
               results: collection,
               enable_filtering: section.settings.enable_filtering,
               enable_sorting: section.settings.enable_sorting,
-              filter_type: section.settings.filter_type
+              filter_type: section.settings.filter_type,
+              toolbar_active_facets: section.settings.enable_filtering
             %}
           </aside>
         {%- endif -%}

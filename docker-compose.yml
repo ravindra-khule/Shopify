@@ -1,0 +1,32 @@
+services:
+  # Long-running dev server: shopify theme dev
+  dev:
+    build: .
+    container_name: shopify-theme-dev
+    working_dir: /theme
+    env_file: .env
+    ports:
+      - "9292:9292"
+    volumes:
+      - .:/theme
+      - shopify-cli-config:/root/.config
+    stdin_open: true
+    tty: true
+    command: ["shopify", "theme", "dev", "--host", "0.0.0.0", "--port", "9292"]
+
+  # One-off CLI commands, e.g.:
+  #   docker compose run --rm cli theme list
+  #   docker compose run --rm cli theme pull
+  cli:
+    build: .
+    working_dir: /theme
+    env_file: .env
+    volumes:
+      - .:/theme
+      - shopify-cli-config:/root/.config
+    stdin_open: true
+    tty: true
+    entrypoint: ["shopify"]
+
+volumes:
+  shopify-cli-config:
