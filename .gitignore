@@ -1,0 +1,4 @@
+# Local environment / secrets (never commit Theme Access tokens)
+.env
+.env.*
+!.env.example

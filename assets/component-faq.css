@@ -1,0 +1,39 @@
+faq-section {
+  display: block;
+}
+
+.faq__wrapper {
+  margin: 0 auto;
+  max-width: 73.4rem;
+}
+
+.faq__header {
+  word-break: break-word;
+}
+
+.faq__heading {
+  margin: 0 0 2rem;
+}
+
+.faq__list {
+  border-top: 0.1rem solid rgba(var(--color-foreground), 0.08);
+}
+
+.faq__item.accordion {
+  margin-top: 0;
+  border-top: none;
+}
+
+.faq__item summary {
+  align-items: center;
+}
+
+.faq__question {
+  flex: 1;
+  margin: 0;
+  padding-right: 2rem;
+}
+
+.faq__item .icon-caret {
+  flex-shrink: 0;
+}

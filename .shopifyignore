@@ -1,0 +1,12 @@
+# Files that must NOT be uploaded to the store as part of the theme
+.git/
+.gitignore
+.gitattributes
+.env
+.env.*
+.dockerignore
+Dockerfile
+docker-compose.yml
+*.md
+*.csv
+node_modules/

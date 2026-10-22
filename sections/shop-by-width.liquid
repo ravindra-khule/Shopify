@@ -1,0 +1,246 @@
+{{ 'component-shop-by-width.css' | asset_url | stylesheet_tag }}
+<script src="{{ 'shop-by-width.js' | asset_url }}" defer="defer"></script>
+
+{%- style -%}
+  .section-{{ section.id }}-padding {
+    padding-top: {{ section.settings.padding_top | times: 0.75 | round: 0 }}px;
+    padding-bottom: {{ section.settings.padding_bottom | times: 0.75 | round: 0 }}px;
+  }
+
+  @media screen and (min-width: 750px) {
+    .section-{{ section.id }}-padding {
+      padding-top: {{ section.settings.padding_top }}px;
+      padding-bottom: {{ section.settings.padding_bottom }}px;
+    }
+  }
+{%- endstyle -%}
+
+<shop-by-width class="section-{{ section.id }}-padding gradient color-{{ section.settings.color_scheme }}">
+  <div class="page-width">
+    {%- if section.settings.heading != blank -%}
+      <h2 class="shop-by-width__heading inline-richtext {{ section.settings.heading_size }}">
+        {{ section.settings.heading }}
+      </h2>
+    {%- endif -%}
+
+    {%- if section.blocks.size > 0 -%}
+      <ul class="shop-by-width__grid" role="list">
+        {%- for block in section.blocks -%}
+          {%- liquid
+            assign card_url = ''
+            assign card_active = false
+            assign card_count = nil
+            assign card_param = ''
+            assign card_value = ''
+            assign filter_value = block.settings.filter_value | strip | handle
+
+            if filter_value != blank and collection
+              for filter in collection.filters
+                for value in filter.values
+                  assign value_handle = value.label | strip | handle
+                  assign raw_handle = value.value | strip | handle
+                  if value_handle == filter_value or raw_handle == filter_value
+                    assign card_param = filter.param_name
+                    assign card_value = value.value
+                    assign card_count = value.count
+                    if value.active
+                      assign card_active = true
+                      assign card_url = value.url_to_remove
+                    else
+                      assign card_url = value.url_to_add
+                    endif
+                    break
+                  endif
+                endfor
+                if card_param != ''
+                  break
+                endif
+              endfor
+            endif
+
+            if card_url == blank
+              assign card_url = block.settings.link
+            endif
+          -%}
+          <li class="shop-by-width__item" {{ block.shopify_attributes }}>
+            {%- if card_url != blank -%}
+              <a
+                href="{{ card_url }}"
+                class="shop-by-width__card{% if card_active %} shop-by-width__card--active{% endif %}"
+                {% if card_param != '' %}
+                  data-filter-param="{{ card_param | escape }}"
+                  data-filter-value="{{ card_value | escape }}"
+                {% endif %}
+              >
+            {%- else -%}
+              <div class="shop-by-width__card">
+            {%- endif -%}
+            <span class="shop-by-width__size">{{ block.settings.width_label }}</span>
+            <span class="shop-by-width__body">
+              <span class="shop-by-width__title">{{ block.settings.title }}</span>
+              {%- capture meta -%}
+                {{ block.settings.description }}
+                {%- if block.settings.show_product_count and card_count != blank -%}
+                  {%- if block.settings.description != blank %} · {% endif -%}
+                  {{ 'products.facets.product_count_simple' | t: count: card_count }}
+                {%- endif -%}
+              {%- endcapture -%}
+              {%- assign meta = meta | strip -%}
+              {%- if meta != '' -%}
+                <span class="shop-by-width__meta">{{ meta }}</span>
+              {%- endif -%}
+            </span>
+            {%- if card_url != blank -%}
+              </a>
+            {%- else -%}
+              </div>
+            {%- endif -%}
+          </li>
+        {%- endfor -%}
+      </ul>
+    {%- endif -%}
+  </div>
+</shop-by-width>
+
+{% schema %}
+{
+  "name": "t:sections.shop-by-width.name",
+  "class": "section",
+  "max_blocks": 6,
+  "settings": [
+    {
+      "type": "inline_richtext",
+      "id": "heading",
+      "default": "t:sections.shop-by-width.settings.heading.default",
+      "label": "t:sections.shop-by-width.settings.heading.label"
+    },
+    {
+      "type": "select",
+      "id": "heading_size",
+      "options": [
+        {
+          "value": "h2",
+          "label": "t:sections.all.heading_size.options__1.label"
+        },
+        {
+          "value": "h1",
+          "label": "t:sections.all.heading_size.options__2.label"
+        },
+        {
+          "value": "h0",
+          "label": "t:sections.all.heading_size.options__3.label"
+        }
+      ],
+      "default": "h1",
+      "label": "t:sections.all.heading_size.label"
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "t:sections.all.colors.label",
+      "default": "scheme-1"
+    },
+    {
+      "type": "header",
+      "content": "t:sections.all.padding.section_padding_heading"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "t:sections.all.padding.padding_top",
+      "default": 20
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "t:sections.all.padding.padding_bottom",
+      "default": 0
+    }
+  ],
+  "blocks": [
+    {
+      "type": "width_card",
+      "name": "t:sections.shop-by-width.blocks.width_card.name",
+      "settings": [
+        {
+          "type": "text",
+          "id": "width_label",
+          "label": "t:sections.shop-by-width.blocks.width_card.settings.width_label.label",
+          "default": "t:sections.shop-by-width.blocks.width_card.settings.width_label.default"
+        },
+        {
+          "type": "text",
+          "id": "title",
+          "label": "t:sections.shop-by-width.blocks.width_card.settings.title.label",
+          "default": "t:sections.shop-by-width.blocks.width_card.settings.title.default"
+        },
+        {
+          "type": "textarea",
+          "id": "description",
+          "label": "t:sections.shop-by-width.blocks.width_card.settings.description.label"
+        },
+        {
+          "type": "text",
+          "id": "filter_value",
+          "label": "t:sections.shop-by-width.blocks.width_card.settings.filter_value.label",
+          "info": "t:sections.shop-by-width.blocks.width_card.settings.filter_value.info"
+        },
+        {
+          "type": "url",
+          "id": "link",
+          "label": "t:sections.shop-by-width.blocks.width_card.settings.link.label",
+          "info": "t:sections.shop-by-width.blocks.width_card.settings.link.info"
+        },
+        {
+          "type": "checkbox",
+          "id": "show_product_count",
+          "label": "t:sections.shop-by-width.blocks.width_card.settings.show_product_count.label",
+          "default": true
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "t:sections.shop-by-width.presets.name",
+      "blocks": [
+        {
+          "type": "width_card",
+          "settings": {
+            "width_label": "1\"",
+            "title": "t:sections.shop-by-width.presets.width_1.title",
+            "description": "t:sections.shop-by-width.presets.width_1.description",
+            "filter_value": "1 inch"
+          }
+        },
+        {
+          "type": "width_card",
+          "settings": {
+            "width_label": "1.6\"",
+            "title": "t:sections.shop-by-width.presets.width_16.title",
+            "description": "t:sections.shop-by-width.presets.width_16.description",
+            "filter_value": "1.6 inch"
+          }
+        },
+        {
+          "type": "width_card",
+          "settings": {
+            "width_label": "2\"",
+            "title": "t:sections.shop-by-width.presets.width_2.title",
+            "description": "t:sections.shop-by-width.presets.width_2.description",
+            "filter_value": "2 inch"
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}
